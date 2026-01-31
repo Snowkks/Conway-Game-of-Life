@@ -19,6 +19,7 @@ int main(void)
     int grid[COLS][ROWS];
     int nextgrid[COLS][ROWS];
 
+    // Initialize grid with 0(dead)
     for(int i = 0; i < COLS; i++){
         for(int j = 0; j < ROWS; j++){
             grid[i][j] = 0;
@@ -28,6 +29,7 @@ int main(void)
 
     srand(time(NULL));
 
+    // randomly make some grid alive(1)
     for (int i = 0; i < COLS; i++) {
         for (int j = 0; j < ROWS; j++) {
             if (rand() % 10 == 0) {
@@ -49,27 +51,33 @@ int main(void)
         BeginDrawing();
         ClearBackground(BLACK);
 
+        //  Loop the entire the grid
         for(int i = 0; i < COLS; i++){
             for(int j = 0; j < ROWS; j++){
 
+                // Draw the live grid
                 if(grid[i][j] == 1 ){
                     DrawRectangle(i * CELL_SIZE, j * CELL_SIZE, CELL_SIZE - 1, CELL_SIZE - 1, WHITE);
                 }
 
                 int alive_neighbors = 0;
 
-                if( i == 0 && j == 0 ) { continue; }
-                else{
-                    if( grid[i + 1][j] == 1 ) { alive_neighbors++; }
-                    if ( grid[i - 1][j] == 1 ) { alive_neighbors++; }
-                    if ( grid[i][j + 1] == 1 ) { alive_neighbors++; }
-                    if ( grid[i][j - 1] == 1 ) { alive_neighbors++; }
-                    if ( grid[i + 1][j + 1] == 1 ) { alive_neighbors++; }
-                    if ( grid[i - 1][j - 1] == 1 ) { alive_neighbors++; }
-                    if ( grid[i - 1][j + 1] == 1 ) { alive_neighbors++; }
-                    if ( grid[i + 1][j - 1] == 1 ) { alive_neighbors++; }
+                // Loop around the grid for checking the neighbors
+                for (int x = -1; x <= 1; x++) {
+                    for (int y = -1; y <= 1; y++) {
+
+                        if (x == 0 && y == 0) continue;
+
+                        int checkX = i + x;
+                        int checkY = j + y;
+
+                        if (checkX >= 0 && checkX < COLS && checkY >= 0 && checkY < ROWS) {
+                            alive_neighbors += grid[checkX][checkY];
+                        }
+                    }
                 }
 
+                // Applied the rules to the grid
                 if( grid[i][j] == 1 ) {
                     if ( alive_neighbors < 2 || alive_neighbors > 3 ){
                         nextgrid[i][j] = 0;
